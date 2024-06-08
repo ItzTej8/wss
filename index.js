@@ -1,4 +1,9 @@
 
+var cookie = "WMONID=V68A7zXvK4n; visid_incap_2651221=SZt5skd1SIy+gYroiVUG4p7A6WUAAAAAQUIPAAAAAAAJ31JCh/zEsdvYJ+2K1ZXE; incap_ses_1570_2651221=FqlvVW59HRVinxM1wcLJFdPoY2YAAAAAD4KlZA5TJHAdROOUPdH+yg==; ASOBGSPNSESSIONID=mnD3c8sleQndCUnU8_JtRYdj5AOThzzTEbhf6SBwRhaFjnozQ9bR!1483430407!1429564245; dtPC=-";
+
+checkih().then(checkifget())
+
+
 
 
 async function checkih(){
@@ -16,7 +21,7 @@ const req = await fetch("https://biz2.samsungcsportal.com/gspn/operate.do", {
       "sec-fetch-site": "same-origin",
       "x-prototype-version": "1.7.2",
       "x-requested-with": "XMLHttpRequest",
-      "cookie": "WMONID=V68A7zXvK4n; visid_incap_2651221=SZt5skd1SIy+gYroiVUG4p7A6WUAAAAAQUIPAAAAAAAJ31JCh/zEsdvYJ+2K1ZXE; incap_ses_1570_2651221=FqlvVW59HRVinxM1wcLJFdPoY2YAAAAAD4KlZA5TJHAdROOUPdH+yg==; dtPC=-; ASOBGSPNSESSIONID=Jw321b4X1_E1I_hjS92Fh6xsJfSpmso22Xv4T9jCVLux6_5UdCMn!1483430407!1429564245",
+      "cookie": cookie,
       "Referer": "https://biz2.samsungcsportal.com/svctracking/svcorder/ServiceOrderListBatch.jsp?search_status=&searchContent=&menuBlock=&menuUrl=&naviDirValue=",
       "Referrer-Policy": "strict-origin-when-cross-origin"
     },
@@ -28,12 +33,14 @@ const req = await fetch("https://biz2.samsungcsportal.com/gspn/operate.do", {
   console.log(res)
 
 }
-checkih();
+
 
 async function checkifget(){
-
+await sleep(2000);
+console.log("in checkifget")
     while (true)
         {
+            try{
     const req = await fetch("https://biz2.samsungcsportal.com/gspn/operate.do", {
         "headers": {
           "accept": "text/javascript, text/html, application/xml, text/xml, */*",
@@ -47,7 +54,7 @@ async function checkifget(){
           "sec-fetch-site": "same-origin",
           "x-prototype-version": "1.7.2",
           "x-requested-with": "XMLHttpRequest",
-          "cookie": "WMONID=V68A7zXvK4n; visid_incap_2651221=SZt5skd1SIy+gYroiVUG4p7A6WUAAAAAQUIPAAAAAAAJ31JCh/zEsdvYJ+2K1ZXE; incap_ses_1570_2651221=FqlvVW59HRVinxM1wcLJFdPoY2YAAAAAD4KlZA5TJHAdROOUPdH+yg==; dtPC=-; ASOBGSPNSESSIONID=Jw321b4X1_E1I_hjS92Fh6xsJfSpmso22Xv4T9jCVLux6_5UdCMn!1483430407!1429564245",
+          "cookie": cookie,
           "Referer": "https://biz2.samsungcsportal.com/svctracking/svcorder/BatchJobDisplay.jsp",
           "Referrer-Policy": "strict-origin-when-cross-origin"
         },
@@ -55,7 +62,28 @@ async function checkifget(){
         "method": "POST"
       });
 
-      const res = await req.text()
+      const res = await req.json();
       console.log(res);
+      if (res.svcList[0].batchStatus== "Completed")
+        {
+            console.log("COmpleted");
+            break;
+        }
+        else{
+            console.log("Requesting again..");
+            await checkifget();
+      await sleep(2000);
+        }
+    }
+    catch(e)
+    {
+        console.log("in catch >>>", e)
+break;
     }
 }
+     
+}
+
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
